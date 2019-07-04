@@ -12,7 +12,7 @@
 # **Java基础** #
 ## Java的环境变量配置 ##
 ## Lambda表达式总结 ##
-<a href="content/Lambda表达式总结.html" target="_blank">点击跳转</a>
+<a href="content/Lambda表达式总结.md" target="_blank">点击跳转</a>
 
 # **Spring相关** #
 ##  Spring的定义 ##

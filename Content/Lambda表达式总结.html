@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <title>Lambda表达式总结</title>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+        
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        
+        
+    </head>
+    <body>
+        <h1 id="Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%80%BB%E7%BB%93">Lambda表达式总结</h1>
+<ul>
+<li><a href="#Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%80%BB%E7%BB%93">Lambda表达式总结</a>
+<ul>
+<li><a href="#%E4%B8%80%E4%BD%BF%E7%94%A8%E8%8C%83%E4%BE%8B%E4%BB%A5%E5%8F%8A%E4%BE%8B%E5%AD%90">一、使用范例以及例子</a>
+<ul>
+<li><a href="#1%E5%8E%9F%E5%A7%8B%E6%96%B9%E6%B3%95">1、原始方法</a></li>
+<li><a href="#2%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F%E4%B8%80-%E4%BD%BF%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E6%9D%A5%E4%BC%98%E5%8C%96">2、优化方式一-使用策略模式来优化</a></li>
+<li><a href="#3%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F%E4%BA%8C-%E4%BD%BF%E7%94%A8%E5%8C%BF%E5%90%8D%E5%86%85%E9%83%A8%E7%B1%BB%E4%BC%98%E5%8C%96">3、优化方式二-使用匿名内部类优化</a></li>
+<li><a href="#4font-color--green%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F%E4%B8%89-%E4%BD%BF%E7%94%A8Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F">4、<font color = green>优化方式三-使用Lambda表达式</a></li>
+<li><a href="#5font-color--green%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F%E5%9B%9B-%E4%BD%BF%E7%94%A8Stream-API">5、<font color = green>优化方式四-使用Stream-API</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8CLambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95">二、Lambda表达式基础语法</a></li>
+<li><a href="#%E4%B8%89%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3">三、函数式接口</a></li>
+<li><a href="#%E5%9B%9BLambda%E7%BB%83%E4%B9%A0">四、Lambda练习</a>
+<ul>
+<li><a href="#1%E7%BB%83%E4%B9%A0%E4%B8%80-Employee%E7%B1%BB%E4%B8%AD%E5%85%88%E6%8C%89%E5%B9%B4%E9%BE%84%E6%AF%94%E5%B9%B4%E9%BE%84%E7%9B%B8%E5%90%8C%E6%8C%89%E7%85%A7%E5%A7%93%E5%90%8D%E6%AF%94-%E9%83%BD%E6%98%AF%E5%8D%87%E5%BA%8F">1、练习一-<code>Employee</code>类中先按年龄比，年龄相同按照姓名比-都是升序</a></li>
+<li><a href="#2%E7%BB%83%E4%B9%A0%E4%BA%8C-%E5%A3%B0%E6%98%8E%E4%B8%80%E4%B8%AA%E5%B8%A6%E4%B8%A4%E4%B8%AA%E6%B3%9B%E5%9E%8B%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%B9%B6%E4%B8%94%E5%AF%B9%E4%B8%A4%E4%B8%AALong%E5%9E%8B%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97">2、练习二-声明一个带两个泛型的接口，并且对两个<code>Long</code>型数值计算</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%94Java8%E5%9B%9B%E5%A4%A7%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3">五、Java8四大内置函数式接口</a>
+<ul>
+<li><a href="#1Consumer-T-con%E6%B6%88%E8%B4%B9%E6%80%A7%E6%8E%A5%E5%8F%A3-void-acceptT-t">1、<code>Consumer&lt; T &gt;con</code>消费性接口-<code>void accept(T t)</code></a></li>
+<li><a href="#2Supplier-T-sup%E4%BE%9B%E7%BB%99%E5%9E%8B%E6%8E%A5%E5%8F%A3-T-get">2、<code>Supplier&lt; T &gt;sup</code>供给型接口-<code>T get()</code></a></li>
+<li><a href="#3Function-T-R-fun%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3--R-apply-T-t">3、<code>Function&lt; T, R &gt;fun</code>函数式接口-<code>R apply (T t)</code></a></li>
+<li><a href="#4Predicate-T-%E6%96%AD%E8%A8%80%E5%BD%A2%E6%8E%A5%E5%8F%A3-boolean-testT-t">4、<code>Predicate&lt; T &gt;</code>断言形接口-<code>boolean test(T t)</code></a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%AD%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E5%92%8C%E6%9E%84%E9%80%A0%E5%99%A8%E5%BC%95%E7%94%A8">六、方法引用和构造器引用</a>
+<ul>
+<li><a href="#1%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8">1、方法引用</a>
+<ul>
+<li><a href="#1%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F%E4%B8%80-%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E5%90%8D">1)、语法格式(一) 对象::实例方法名</a></li>
+<li><a href="#2%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F%E4%BA%8C-%E7%B1%BB%E5%90%8D%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95">2)、语法格式(二) 类名::静态方法</a></li>
+<li><a href="#3%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F%E4%B8%89-%E7%B1%BB%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E5%90%8Dfont">3)、语法格式(三) 类::实例方法名</font></a></li>
+</ul>
+</li>
+<li><a href="#2%E6%9E%84%E9%80%A0%E5%99%A8%E5%BC%95%E7%94%A8">2)、构造器引用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="%E4%B8%80%E4%BD%BF%E7%94%A8%E8%8C%83%E4%BE%8B%E4%BB%A5%E5%8F%8A%E4%BE%8B%E5%AD%90">一、使用范例以及例子</h2>
+<p>使用匿名内部类:</p>
+<pre><code class="language-java"><div>Comparator&lt;Integer&gt;com = <span class="hljs-keyword">new</span> Comparator&lt;Integer&gt;() {
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">compare</span><span class="hljs-params">(Integer o1, Integer o2)</span> </span>{  <span class="hljs-comment">//降序排列</span>
+        <span class="hljs-keyword">return</span> Integer.compare(o2,o1);
+    }
+};
+</div></code></pre>
+<p>使用<code>Lambda</code>表达式:</p>
+<pre><code class="language-java"><div> Comparator&lt;Integer&gt; com = (x, y) -&gt; Integer.compare(y, x);
+</div></code></pre>
+<p><strong>下面给出一个例子来引入<code>Lambda</code>表达式。</strong></p>
+<p>给出一个<code>Employee</code>类，有<code>name、age、salary</code>三个属性：</p>
+<pre><code class="language-java"><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Employee</span> </span>{
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> age;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> salary;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Employee</span><span class="hljs-params">()</span> </span>{
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Employee</span><span class="hljs-params">(String name, <span class="hljs-keyword">int</span> age, <span class="hljs-keyword">double</span> salary)</span> </span>{
+        <span class="hljs-keyword">this</span>.name = name;
+        <span class="hljs-keyword">this</span>.age = age;
+        <span class="hljs-keyword">this</span>.salary = salary;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getName</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> name;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getAge</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> age;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getSalary</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> salary;
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"name='"</span> + name + <span class="hljs-string">'\''</span> +
+                <span class="hljs-string">", age="</span> + age +
+                <span class="hljs-string">", salary="</span> + salary;
+    }
+}
+
+</div></code></pre>
+<p>然后我们需要通过限制查询数据:</p>
+<ul>
+<li>比如查询年龄<code>&gt;25</code>岁的所有员工的信息；</li>
+<li>再如查询工资<code>&gt;4000</code>的员工信息；</li>
+</ul>
+<p>首先给出一个<code>List</code>集合类模拟数据库表:</p>
+<pre><code class="language-java"><div><span class="hljs-comment">//将数组转换成集合的</span>
+List&lt;Employee&gt; employees = Arrays.asList(
+    <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"张三"</span>,<span class="hljs-number">23</span>,<span class="hljs-number">3333.33</span>),
+    <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"李四"</span>,<span class="hljs-number">24</span>,<span class="hljs-number">4444.44</span>),
+    <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"王五"</span>,<span class="hljs-number">25</span>,<span class="hljs-number">5555.55</span>),
+    <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"赵六"</span>,<span class="hljs-number">26</span>,<span class="hljs-number">6666.66</span>),
+    <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"田七"</span>,<span class="hljs-number">27</span>,<span class="hljs-number">7777.77</span>)
+);
+</div></code></pre>
+<h3 id="1%E5%8E%9F%E5%A7%8B%E6%96%B9%E6%B3%95">1、原始方法</h3>
+<p>然后我们写分别查询出<font color =red>年龄大于<code>25</code>岁的员工信息和工资大于<code>4000</code></font>的员工信息，发现<code>findEmployeesByAge</code>和<code>findEmployeesBySalary</code>两个方法代码非常的相似，<font color =red>只有查询条件不同，所以这个方法是不太可取的。</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test3</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-comment">//年龄</span>
+    List&lt;Employee&gt; list = findEmployeesByAge(employees);
+    <span class="hljs-keyword">for</span>(Employee emp : list){
+        System.out.println(emp);
+    }
+    <span class="hljs-comment">//工资</span>
+    System.out.println(<span class="hljs-string">"---------------------"</span>);
+    List&lt;Employee&gt; list2 = findEmployeesBySalary(employees);
+    <span class="hljs-keyword">for</span>(Employee emp : list2){
+        System.out.println(emp);
+    }
+}
+
+<span class="hljs-comment">//原始方法 : 查询出年龄大于25岁的(这个是最原始的方法)</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Employee&gt; <span class="hljs-title">findEmployeesByAge</span><span class="hljs-params">(List&lt;Employee&gt;list)</span></span>{
+    List&lt;Employee&gt;emps = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+    <span class="hljs-keyword">for</span>(Employee emp : list){
+        <span class="hljs-keyword">if</span>(emp.getAge() &gt; <span class="hljs-number">25</span>){
+            emps.add(emp);
+        }
+    }
+    <span class="hljs-keyword">return</span> emps;
+}
+
+<span class="hljs-comment">//原始方法 : 查询出工资大于4000的(这个是最原始的方法)</span>
+<span class="hljs-comment">//和上面的方法唯一的差别只有年龄和工资的改动，代码冗余</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Employee&gt; <span class="hljs-title">findEmployeesBySalary</span><span class="hljs-params">(List&lt;Employee&gt;list)</span></span>{
+    List&lt;Employee&gt;emps = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+    <span class="hljs-keyword">for</span>(Employee emp : list){
+        <span class="hljs-keyword">if</span>(emp.getSalary() &gt; <span class="hljs-number">4000</span>){
+            emps.add(emp);
+        }
+    }
+    <span class="hljs-keyword">return</span> emps;
+}
+
+</div></code></pre>
+<h3 id="2%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F%E4%B8%80-%E4%BD%BF%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E6%9D%A5%E4%BC%98%E5%8C%96">2、优化方式一-使用策略模式来优化</h3>
+<p>策略模式需要行为算法族，于是我们创建查询行为的接口<code>MyPredicate&lt;T&gt;</code>:</p>
+<pre><code class="language-java"><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">MyPredicate</span> &lt;<span class="hljs-title">T</span>&gt;</span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">test</span><span class="hljs-params">(T t)</span></span>;
+}
+</div></code></pre>
+<p>并创建相关的实现类代表不同的算法行为: (分别是年龄<code>&gt; 25</code>和工资<code>&gt; 4000</code>的 ):</p>
+<pre><code class="language-java"><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FilterEmployeeByAge</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">MyPredicate</span>&lt;<span class="hljs-title">Employee</span>&gt; </span>{
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">test</span><span class="hljs-params">(Employee employee)</span> </span>{
+        <span class="hljs-keyword">return</span>  employee.getAge() &gt; <span class="hljs-number">25</span>;
+    }
+}
+</div></code></pre>
+<pre><code class="language-java"><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FilterEmployeeBySalary</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">MyPredicate</span>&lt;<span class="hljs-title">Employee</span>&gt;</span>{
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">test</span><span class="hljs-params">(Employee employee)</span> </span>{
+        <span class="hljs-keyword">return</span> employee.getSalary()  &gt;= <span class="hljs-number">4000</span>;
+    }
+}
+</div></code></pre>
+<p><font color = red>这时我们可以只需要创建通用的方法: 具体的调用只需要传入具体的实现类(接口作为参数)</font></p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Employee&gt; <span class="hljs-title">filterEmployees</span><span class="hljs-params">(List&lt;Employee&gt;list,MyPredicate&lt;Employee&gt;mp)</span></span>{
+    List&lt;Employee&gt;emps = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+    <span class="hljs-keyword">for</span>(Employee emp : list){
+        <span class="hljs-keyword">if</span>(mp.test(emp)){  <span class="hljs-comment">//调用相应的过滤器</span>
+            emps.add(emp);
+        }
+    }
+    <span class="hljs-keyword">return</span> emps;
+}
+</div></code></pre>
+<p><font color =red>测试的时候就传入两个不同的类，来指定查询的行为</font></p>
+<pre><code class="language-java"><div><span class="hljs-comment">//优化方式一 :  使用策略设计模式进行优化  下面的方法只要写一个</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test4</span><span class="hljs-params">()</span></span>{
+    List&lt;Employee&gt; list = filterEmployees(<span class="hljs-keyword">this</span>.employees, <span class="hljs-keyword">new</span> FilterEmployeeByAge());
+    <span class="hljs-keyword">for</span>(Employee emp : list){
+        System.out.println(emp);
+    }
+    System.out.println(<span class="hljs-string">"------------------------"</span>);
+    List&lt;Employee&gt; list2 = filterEmployees(<span class="hljs-keyword">this</span>.employees, <span class="hljs-keyword">new</span> FilterEmployeeBySalary());
+    <span class="hljs-keyword">for</span>(Employee emp : list2){
+        System.out.println(emp);
+    }
+}
+</div></code></pre>
+<h3 id="3%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F%E4%BA%8C-%E4%BD%BF%E7%94%A8%E5%8C%BF%E5%90%8D%E5%86%85%E9%83%A8%E7%B1%BB%E4%BC%98%E5%8C%96">3、优化方式二-使用匿名内部类优化</h3>
+<p><font color =red>这样的好处在于不需要创建接口的具体的实现类，(但是还是需要<code>MyPredicate</code>接口和<code>filterEmployees()</code>方法):</p>
+<pre><code class="language-java"><div><span class="hljs-comment">//优化方式二 ： 使用匿名内部类  这样的好处是不要创建一个额外的 策略类</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test5</span><span class="hljs-params">()</span></span>{
+    List&lt;Employee&gt; list = filterEmployees(<span class="hljs-keyword">this</span>.employees, <span class="hljs-keyword">new</span> MyPredicate&lt;Employee&gt;() {
+        <span class="hljs-meta">@Override</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">test</span><span class="hljs-params">(Employee employee)</span> </span>{
+            <span class="hljs-keyword">return</span> employee.getSalary() &gt; <span class="hljs-number">4000</span>;
+        }
+    });
+    <span class="hljs-keyword">for</span> (Employee emp:list) {
+        System.out.println(emp);
+    }
+}
+</div></code></pre>
+<h3 id="4font-color--green%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F%E4%B8%89-%E4%BD%BF%E7%94%A8Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F">4、<font color = green>优化方式三-使用Lambda表达式</h3>
+<p><font color = red>省去匿名内部类的没用的代码，增强可读性:(注意还是需要那个<code>filterEmployees()</code>方法和<code>MyPredicate</code>接口)</font></p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test6</span><span class="hljs-params">()</span></span>{
+    List&lt;Employee&gt; list = filterEmployees(<span class="hljs-keyword">this</span>.employees, (e) -&gt; e.getSalary() &gt; <span class="hljs-number">4000</span>);
+    list.forEach(System.out::println);
+}
+</div></code></pre>
+<h3 id="5font-color--green%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F%E5%9B%9B-%E4%BD%BF%E7%94%A8Stream-API">5、<font color = green>优化方式四-使用Stream-API</h3>
+<p><font color = red>使用<code>StreamAPI</code>完全不需要其他的代码，包括不需要<code>filterEmployees()</code>方法，代码很简洁:</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test7</span><span class="hljs-params">()</span></span>{
+    employees.stream().filter( (e) -&gt; e.getSalary() &lt; <span class="hljs-number">4000</span> ).limit(<span class="hljs-number">2</span>).forEach(System.out::println);
+    System.out.println(<span class="hljs-string">"------------------"</span>);
+    employees.stream().map(Employee::getName).forEach(System.out::println); <span class="hljs-comment">//打印所有的名字</span>
+}
+</div></code></pre>
+<hr>
+<h2 id="%E4%BA%8CLambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95">二、Lambda表达式基础语法</h2>
+<p><strong>关于箭头操作符:</strong></p>
+<ul>
+<li><code>Java8</code>中引入了一个新的操作符，<code>&quot;-&gt;&quot;</code>，该操作符称为箭头操作符或者<code>Lambda</code>操作符，箭头操作符将<code>Lambda</code>表达式拆分成两部分；</li>
+<li>左侧:  <code>Lambda</code>表达式的<font color = blue>参数列表</font>，对应的是<font color = red>接口中抽象方法的参数列表</font>；</li>
+<li>右侧:  <code>Lambda</code>表达式中所需要执行的功能(<font color =blue><code>Lambda</code>体</font>)，对应的是<font color = red>对抽象方法的实现；(函数式接口(只能有一个抽象方法))</font></li>
+<li><code>Lambda</code>表达式的实质是　<font color =red>对接口的实现</font>；</li>
+</ul>
+<p><strong>语法格式:</strong></p>
+<p>(一)、接口中的抽象方法 : 无参数，无返回值；</p>
+<p>例如: <code>Runnable</code>接口中的<code>run</code>方法:</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test1</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-comment">/*final */</span><span class="hljs-keyword">int</span> num = <span class="hljs-number">2</span>; <span class="hljs-comment">//jdk1.7之前必须定义为final的下面的匿名内部类中才能访问</span>
+
+    Runnable r = <span class="hljs-keyword">new</span> Runnable() {
+        <span class="hljs-meta">@Override</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>{
+            System.out.println(<span class="hljs-string">"Hello world!"</span> + num); <span class="hljs-comment">//本质还是不能对num操作(只是jdk自己为我们设置成了final的)</span>
+        }
+    };
+    r.run();
+
+    System.out.println(<span class="hljs-string">"----------使用Lambda输出-----------"</span>);
+
+    Runnable r1 = () -&gt; System.out.println(<span class="hljs-string">"Hello world!"</span> + num);
+    r1.run();
+}
+</div></code></pre>
+<p><font color =red>(二)、接口中的抽象方法 : 一个参数且无返回值；  (若只有一个参数，那么小括号可以省略不写)</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test2</span><span class="hljs-params">()</span></span>{
+<span class="hljs-comment">//  Consumer&lt;String&gt;con = (x) -&gt; System.out.println(x);</span>
+    Consumer&lt;String&gt;con = x -&gt; System.out.println(x);
+    con.accept(<span class="hljs-string">"Lambda牛逼!"</span>);
+}
+</div></code></pre>
+<p><font color =red>(三)、两个参数，有返回值，并且有多条语句 ：　<strong>要用大括号括起来，而且要写上<code>return</code></strong></p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test3</span><span class="hljs-params">()</span></span>{
+     Comparator&lt;Integer&gt;com = (x,y) -&gt; {
+         System.out.println(<span class="hljs-string">"函数式接口"</span>);
+         <span class="hljs-keyword">return</span> Integer.compare(y,x); <span class="hljs-comment">//降序</span>
+     };
+     
+     Integer[] nums = {<span class="hljs-number">4</span>,<span class="hljs-number">2</span>,<span class="hljs-number">8</span>,<span class="hljs-number">1</span>,<span class="hljs-number">5</span>};
+     Arrays.sort(nums,com);
+     System.out.println(Arrays.toString(nums));
+}
+</div></code></pre>
+<p>输出:</p>
+<pre><code class="language-java"><div>函数式接口
+函数式接口
+函数式接口
+函数式接口
+函数式接口
+函数式接口
+函数式接口
+函数式接口
+函数式接口
+[<span class="hljs-number">8</span>, <span class="hljs-number">5</span>, <span class="hljs-number">4</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]
+</div></code></pre>
+<p><font color =red>(四)、两个参数，有返回值，但是只有一条语句:　<strong>大括号省略，<code>return</code>省略</strong></p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test4</span><span class="hljs-params">()</span></span>{
+     Comparator&lt;Integer&gt;com = (x,y) -&gt; Integer.compare(x,y);<span class="hljs-comment">//升序</span>
+     Integer[] nums = {<span class="hljs-number">4</span>,<span class="hljs-number">2</span>,<span class="hljs-number">8</span>,<span class="hljs-number">1</span>,<span class="hljs-number">5</span>};
+     Arrays.sort(nums,com);
+     System.out.println(Arrays.toString(nums));
+ }
+</div></code></pre>
+<p>输出:</p>
+<pre><code class="language-java"><div>[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">8</span>]
+</div></code></pre>
+<p><font color =red>(五)、 <code>Lambda</code>表达式的参数列表的数据类型 可以省略不写，因为JVM编译器通过上下文推断出数据类型，即&quot;类型推断&quot;， <code>(Integer x,Integer y ) -&gt; Integer.compare(x,y)</code>可以简写成<code>(x,y) -&gt; Integer.compare(x,y)</code>；</p>
+<pre><code class="language-java"><div>上联: 左右遇一括号省
+下联: 左侧推断类型省
+横批: 能省则省
+</div></code></pre>
+<hr>
+<h2 id="%E4%B8%89%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3">三、函数式接口</h2>
+<ul>
+<li><font color =red>若接口中只有一个抽象方法的接口称为函数式接口；</li>
+<li><font color =red>可以使用注解<code>@FunctionlInterface</code>来标识，可以检查是否是函数式接口；</li>
+</ul>
+<p>例子: 对一个进行<code>+-*/</code>的运算：</p>
+<p>函数式接口:</p>
+<pre><code class="language-java"><div><span class="hljs-meta">@FunctionalInterface</span> <span class="hljs-comment">//函数式接口</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">MyFunction</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Integer <span class="hljs-title">getValue</span><span class="hljs-params">(Integer num)</span></span>;
+}
+</div></code></pre>
+<p>通用函数:</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> Integer <span class="hljs-title">operation</span><span class="hljs-params">(Integer num,MyFunction mf)</span></span>{
+    <span class="hljs-keyword">return</span> mf.getValue(num);
+}
+</div></code></pre>
+<p>测试:</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test5</span><span class="hljs-params">()</span></span>{
+     Integer res = operation(<span class="hljs-number">200</span>, (x) -&gt; x * x);
+     System.out.println(res);
+ }
+</div></code></pre>
+<hr>
+<h2 id="%E5%9B%9BLambda%E7%BB%83%E4%B9%A0">四、Lambda练习</h2>
+<h3 id="1%E7%BB%83%E4%B9%A0%E4%B8%80-Employee%E7%B1%BB%E4%B8%AD%E5%85%88%E6%8C%89%E5%B9%B4%E9%BE%84%E6%AF%94%E5%B9%B4%E9%BE%84%E7%9B%B8%E5%90%8C%E6%8C%89%E7%85%A7%E5%A7%93%E5%90%8D%E6%AF%94-%E9%83%BD%E6%98%AF%E5%8D%87%E5%BA%8F">1、练习一-<code>Employee</code>类中先按年龄比，年龄相同按照姓名比-都是升序</h3>
+<p>先给出集合，模拟数据库表:</p>
+<pre><code class="language-java"><div>List&lt;Employee&gt; employees = Arrays.asList(
+        <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"田七"</span>,<span class="hljs-number">27</span>,<span class="hljs-number">7777.77</span>),
+        <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"王五"</span>,<span class="hljs-number">24</span>,<span class="hljs-number">5555.55</span>),
+        <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"张三"</span>,<span class="hljs-number">23</span>,<span class="hljs-number">3333.33</span>),
+        <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"李四"</span>,<span class="hljs-number">24</span>,<span class="hljs-number">4444.44</span>),
+        <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"赵六"</span>,<span class="hljs-number">26</span>,<span class="hljs-number">6666.66</span>)
+);
+</div></code></pre>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test1</span><span class="hljs-params">()</span></span>{
+   Collections.sort(employees,(x,y) -&gt;{
+       <span class="hljs-keyword">if</span>(x.getAge() == y.getAge()){
+           <span class="hljs-keyword">return</span> x.getName().compareTo(y.getName());
+       }<span class="hljs-keyword">else</span>{
+           <span class="hljs-keyword">return</span> Integer.compare(x.getAge(),y.getAge());
+       }
+   });
+
+   <span class="hljs-keyword">for</span> (Employee emp: employees) {
+       System.out.println(emp);
+   }
+}
+</div></code></pre>
+<p>输出:</p>
+<pre><code class="language-java"><div>name=<span class="hljs-string">'张三'</span>, age=<span class="hljs-number">23</span>, salary=<span class="hljs-number">3333.33</span>
+name=<span class="hljs-string">'李四'</span>, age=<span class="hljs-number">24</span>, salary=<span class="hljs-number">4444.44</span>
+name=<span class="hljs-string">'王五'</span>, age=<span class="hljs-number">24</span>, salary=<span class="hljs-number">5555.55</span>
+name=<span class="hljs-string">'赵六'</span>, age=<span class="hljs-number">26</span>, salary=<span class="hljs-number">6666.66</span>
+name=<span class="hljs-string">'田七'</span>, age=<span class="hljs-number">27</span>, salary=<span class="hljs-number">7777.77</span>
+</div></code></pre>
+<h3 id="2%E7%BB%83%E4%B9%A0%E4%BA%8C-%E5%A3%B0%E6%98%8E%E4%B8%80%E4%B8%AA%E5%B8%A6%E4%B8%A4%E4%B8%AA%E6%B3%9B%E5%9E%8B%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%B9%B6%E4%B8%94%E5%AF%B9%E4%B8%A4%E4%B8%AALong%E5%9E%8B%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97">2、练习二-声明一个带两个泛型的接口，并且对两个<code>Long</code>型数值计算</h3>
+<pre><code class="language-java"><div><span class="hljs-meta">@FunctionalInterface</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">MyCalFunction</span>&lt;<span class="hljs-title">T</span>,<span class="hljs-title">R</span>&gt; </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> R <span class="hljs-title">getValue</span><span class="hljs-params">(T t1,T t2)</span></span>; 
+}
+</div></code></pre>
+<p>对应函数和测试:</p>
+<pre><code class="language-java"><div> <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test3</span><span class="hljs-params">()</span></span>{
+     op(<span class="hljs-number">200L</span>,<span class="hljs-number">200L</span>,(x,y) -&gt; x + y);
+     op(<span class="hljs-number">200L</span>,<span class="hljs-number">200L</span>,(x,y) -&gt; x * y);
+ }
+ <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">op</span><span class="hljs-params">(Long l1,Long l2,MyCalFunction&lt;Long,Long&gt;mc)</span></span>{<span class="hljs-comment">//需求: 对于两个long型运算进行处理</span>
+     System.out.println(mc.getValue(l1, l2));
+ }
+</div></code></pre>
+<p>更多的例子: (取自<code>&lt;&lt;</code>Java8<code>实战&gt;&gt;</code>)
+<img src="file:///g:\学习笔记\Content\images\lambda1.png" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>根据上述语法规则，以下哪个不是有效的Lambda表达式？
+(1)  () -&gt; {}
+(2)  () -&gt; &quot;Raoul&quot;
+(3)  () -&gt; {return &quot;Mario&quot;;}
+(4)  (Integer i) -&gt; return &quot;Alan&quot; + i;
+(5)  (String s) -&gt; {&quot;IronMan&quot;;}
+答案：只有4和 5是无效的Lambda。</p>
+<p>(1) 这个Lambda没有参数，并返回void。 它类似于主体为空的方法：public void run() {}。
+(2) 这个Lambda没有参数，并返回String作为表达式。
+(3) 这个Lambda没有参数，并返回String（利用显式返回语句）。</p>
+<p>(4) return是一个控制流语句。要使此Lambda有效，需要使花括号，如下所示：<code>(Integer i) -&gt; {return &quot;Alan&quot; + i;}</code>。</p>
+<p>(5)“Iron Man”是一个表达式，不是一个语句。要使此Lambda有效，你可以去除花括号和分号，如下所示：<code>(String s) -&gt; &quot;Iron Man&quot;</code>。或者如果你喜欢，可以使用显式返回语句，如下所示：<code>(String s)-&gt;{return &quot;IronMan&quot;;}</code>。</p>
+</blockquote>
+<p>(注意类型可以省略(类型推导)。</p>
+<p>下面是一些使用示例:<img src="file:///g:\学习笔记\Content\images\lambda3.png" alt="在这里插入图片描述"></p>
+<p>上图的<code>Apple</code>类:</p>
+<pre><code class="language-java"><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Apple</span> </span>{
+    <span class="hljs-keyword">public</span> String color;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> weight;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Apple</span><span class="hljs-params">()</span> </span>{
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Apple</span><span class="hljs-params">(String color, <span class="hljs-keyword">int</span> weight)</span> </span>{
+        <span class="hljs-keyword">this</span>.color = color;
+        <span class="hljs-keyword">this</span>.weight = weight;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getColor</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> color;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setColor</span><span class="hljs-params">(String color)</span> </span>{
+        <span class="hljs-keyword">this</span>.color = color;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getWeight</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> weight;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setWeight</span><span class="hljs-params">(<span class="hljs-keyword">int</span> weight)</span> </span>{
+        <span class="hljs-keyword">this</span>.weight = weight;
+    }
+}
+</div></code></pre>
+<hr>
+<h2 id="%E4%BA%94Java8%E5%9B%9B%E5%A4%A7%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3">五、Java8四大内置函数式接口</h2>
+<p>我们发现，如果使用<code>Lambda</code>还要自己写一个接口的话太麻烦，所以<code>Java</code>自己提供了一些接口:</p>
+<ul>
+<li><code>Consumer&lt; T &gt;con</code> 消费性 接口:  <code>void accept(T t)</code>；</li>
+<li><code>Supplier&lt; T &gt;sup</code>供给型接口 :  <code>T get()</code>；</li>
+<li><code>Function&lt; T , R &gt;fun</code> 函数式接口 :   <code>R apply (T t)</code>；</li>
+<li><code>Predicate&lt; T &gt;</code>： 断言形接口 : <code>boolean test(T t)</code>；</li>
+</ul>
+<h3 id="1Consumer-T-con%E6%B6%88%E8%B4%B9%E6%80%A7%E6%8E%A5%E5%8F%A3-void-acceptT-t">1、<code>Consumer&lt; T &gt;con</code>消费性接口-<code>void accept(T t)</code></h3>
+<pre><code class="language-java"><div><span class="hljs-meta">@Test</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test1</span><span class="hljs-params">()</span></span>{
+    apply(<span class="hljs-number">1000</span>,(num) -&gt; System.out.println(<span class="hljs-string">"消费了"</span> + num + <span class="hljs-string">"元!"</span>));
+}
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span><span class="hljs-params">(<span class="hljs-keyword">double</span> num,Consumer&lt;Double&gt;con)</span></span>{
+    con.accept(num);
+}
+</div></code></pre>
+<hr>
+<h3 id="2Supplier-T-sup%E4%BE%9B%E7%BB%99%E5%9E%8B%E6%8E%A5%E5%8F%A3-T-get">2、<code>Supplier&lt; T &gt;sup</code>供给型接口-<code>T get()</code></h3>
+<p>例子: 产生指定个数的整数，并放入集合中；</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test2</span><span class="hljs-params">()</span></span>{
+    ArrayList&lt;Integer&gt; res = getNumList(<span class="hljs-number">10</span>, () -&gt; (<span class="hljs-keyword">int</span>) (Math.random() * <span class="hljs-number">100</span>));
+    System.out.println(res);
+}
+<span class="hljs-comment">//需求，产生指定个数的整数，并放入集合中</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> ArrayList&lt;Integer&gt; <span class="hljs-title">getNumList</span><span class="hljs-params">(<span class="hljs-keyword">int</span> num, Supplier&lt;Integer&gt;sup)</span></span>{
+    ArrayList&lt;Integer&gt;list = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; num; i++){
+        Integer e = sup.get();
+        list.add(e);
+    }
+    <span class="hljs-keyword">return</span> list;
+}
+</div></code></pre>
+<h3 id="3Function-T-R-fun%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3-R-apply-T-t">3、<code>Function&lt; T, R &gt;fun</code>函数式接口-<code>R apply (T t)</code></h3>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test3</span><span class="hljs-params">()</span></span>{
+    String newStr = strHandler(<span class="hljs-string">"abc"</span>, (str) -&gt; str.toUpperCase());
+    System.out.println(newStr);
+    newStr = strHandler(<span class="hljs-string">"   abc  "</span>, (str) -&gt; str.trim());
+    System.out.println(newStr);
+}
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">strHandler</span><span class="hljs-params">(String str, Function&lt;String,String&gt;fun)</span></span>{
+    <span class="hljs-keyword">return</span> fun.apply(str);
+}
+</div></code></pre>
+<h3 id="4Predicate-T-%E6%96%AD%E8%A8%80%E5%BD%A2%E6%8E%A5%E5%8F%A3-boolean-testT-t">4、<code>Predicate&lt; T &gt;</code>断言形接口-<code>boolean test(T t)</code></h3>
+<p>判断一些字符串数组判断长度<code>&gt;2</code>的字符串:</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test4</span><span class="hljs-params">()</span></span>{
+    List&lt;String&gt; list = Arrays.asList(<span class="hljs-string">"Hello"</span>, <span class="hljs-string">"atguiu"</span>, <span class="hljs-string">"lambda"</span>, <span class="hljs-string">"ok"</span>, <span class="hljs-string">"www"</span>, <span class="hljs-string">"z"</span>);
+    List&lt;String&gt; res = filterStr(list, (str) -&gt; str.length() &gt; <span class="hljs-number">2</span>);
+    System.out.println(res);
+}
+<span class="hljs-comment">//需求</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;String&gt; <span class="hljs-title">filterStr</span><span class="hljs-params">(List&lt;String&gt;list, Predicate&lt;String&gt;pre)</span></span>{
+    ArrayList&lt;String&gt;res = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+    <span class="hljs-keyword">for</span>(String str : list){
+        <span class="hljs-keyword">if</span>(pre.test(str)){
+            res.add(str);
+        }
+    }
+    <span class="hljs-keyword">return</span> res;
+}
+</div></code></pre>
+<hr>
+<h2 id="%E5%85%AD%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E5%92%8C%E6%9E%84%E9%80%A0%E5%99%A8%E5%BC%95%E7%94%A8">六、方法引用和构造器引用</h2>
+<h3 id="1%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8">1、方法引用</h3>
+<p>使用前提: <strong><code>Lambda</code>体中调用方法的参数列表和返回值类型，要和函数式接口中抽象方法的参数列表和返回值类型保持一致；</strong></font></p>
+<h4 id="1%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F%E4%B8%80-%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E5%90%8D">1)、语法格式(一) 对象::实例方法名</h4>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test1</span><span class="hljs-params">()</span></span>{
+	<span class="hljs-comment">//普通写法</span>
+     PrintStream ps = System.out;
+     Consumer&lt;String&gt;con = (x) -&gt; ps.println(x);
+     con.accept(<span class="hljs-string">"hello !"</span>);
+
+     System.out.println(<span class="hljs-string">"----------------------"</span>);
+	<span class="hljs-comment">//简写</span>
+     Consumer&lt;String&gt;con1 = ps::println;
+     con1.accept(<span class="hljs-string">"hello ! "</span>);
+
+     System.out.println(<span class="hljs-string">"----------------------"</span>);
+	<span class="hljs-comment">//更简单的写法</span>
+     Consumer&lt;String&gt;con2 = System.out::println;
+     con2.accept(<span class="hljs-string">"hello ! "</span>);
+}
+</div></code></pre>
+<p><strong>注意，这样写的前提: <code>Consumer</code>中的<code>accept()</code>方法和<code>println()</code>方法的参数列表和返回类型要完全一致:</strong>
+<img src="file:///g:\学习笔记\Content\images\lambda4.png" alt="这里写图片描述">
+<img src="file:///g:\学习笔记\Content\images\lambda5.png" alt="这里写图片描述"></p>
+<p>再看一个例子:
+三种写法的效果是一样的:</p>
+<pre><code class="language-java"><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestLambda</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+
+        <span class="hljs-comment">// method 1</span>
+        Consumer&lt;String&gt; consumer = s -&gt; System.out.println(s);
+        useConsumer(consumer,<span class="hljs-string">"123"</span>);
+
+        <span class="hljs-comment">//method 2</span>
+        useConsumer(s -&gt; System.out.println(s),<span class="hljs-string">"123"</span>);
+
+        <span class="hljs-comment">//method3   method reference (方法引用)</span>
+        useConsumer(System.out::println,<span class="hljs-string">"123"</span>); <span class="hljs-comment">//因为println和 accept 是同样的只有一个入参，没有返回值</span>
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">useConsumer</span><span class="hljs-params">(Consumer&lt;T&gt; consumer,T t)</span></span>{
+        consumer.accept(t);
+    }
+}
+</div></code></pre>
+<p>再看一个例子:</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+    <span class="hljs-comment">//都是输出 字符 'l'</span>
+    BiFunction&lt;String,Integer,Character&gt; bf = String::charAt; <span class="hljs-comment">//这里第一个必须传入　String</span>
+    Character c = bf.apply(<span class="hljs-string">"hello,"</span>, <span class="hljs-number">2</span>);
+    System.out.println(c);
+
+    <span class="hljs-comment">//注意这里使用的是Function 接口</span>
+    String str = <span class="hljs-keyword">new</span> String(<span class="hljs-string">"hello"</span>);
+    Function&lt;Integer,Character&gt; f = str::charAt; <span class="hljs-comment">//这里不需要String</span>
+    Character c2 = f.apply(<span class="hljs-number">2</span>);
+    System.out.println(c2);
+}
+
+</div></code></pre>
+<p>再看一个例子:</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test2</span><span class="hljs-params">()</span></span>{
+    Employee emp = <span class="hljs-keyword">new</span> Employee(<span class="hljs-string">"zx"</span>,<span class="hljs-number">23</span>,<span class="hljs-number">5555</span>);
+
+    Supplier&lt;String&gt;sup = () -&gt; emp.getName();
+    System.out.println(sup.get());
+
+    <span class="hljs-comment">//简写</span>
+    Supplier&lt;String&gt;sup2 = emp::getName;
+    System.out.println(sup2.get());
+}
+</div></code></pre>
+<p><img src="file:///g:\学习笔记\Content\images\lambda6.png" alt="这里写图片描述"></p>
+<p><img src="file:///g:\学习笔记\Content\images\lambda7.png" alt="这里写图片描述"></p>
+<h4 id="2%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F%E4%BA%8C-%E7%B1%BB%E5%90%8D%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95">2)、语法格式(二)  类名::静态方法</h4>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test3</span><span class="hljs-params">()</span></span>{
+     Comparator&lt;Integer&gt;com = (x,y) -&gt; Integer.compare(x,y);
+
+     Comparator&lt;Integer&gt;com2 = Integer::compare;
+}
+</div></code></pre>
+<p><code>Integer</code>类中的</p>
+<p><img src="file:///g:\学习笔记\Content\images\lambda8.png" alt="这里写图片描述"></p>
+<p><code>Comparator</code>接口中的方法:</p>
+<p><img src="file:///g:\学习笔记\Content\images\lambda9.png" alt="这里写图片描述"></p>
+<h4 id="3%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F%E4%B8%89-%E7%B1%BB%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E5%90%8Dfont">3)、语法格式(三) 类::实例方法名</font></h4>
+<p>使用注意: <strong>若Lambda参数列表中的第一个参数是实例方法的第一个调用者，而第二个参数是实例方法的参数时，可以使用<code>ClassName :: method</code>。</strong></p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test4</span><span class="hljs-params">()</span></span>{
+    BiPredicate&lt;String,String&gt;bp = (x,y) -&gt; x.equals(y);
+
+    BiPredicate&lt;String,String&gt;bp2 = String::equals;
+}
+</div></code></pre>
+<p><img src="file:///g:\学习笔记\Content\images\lambda10.png" alt="这里写图片描述"></p>
+<p><img src="file:///g:\学习笔记\Content\images\lambda11.png" alt="这里写图片描述"></p>
+<h3 id="2%E6%9E%84%E9%80%A0%E5%99%A8%E5%BC%95%E7%94%A8">2)、构造器引用</h3>
+<p><strong>需要调用构造器的参数列表，要与函数式接口中的抽象方法的参数列表保持一致；</strong></p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test5</span><span class="hljs-params">()</span></span>{
+    Supplier&lt;Employee&gt;sup = () -&gt; <span class="hljs-keyword">new</span> Employee();
+
+    Supplier&lt;Employee&gt;sup2 = Employee::<span class="hljs-keyword">new</span>; <span class="hljs-comment">//调用的是默认的</span>
+    System.out.println(sup2.get());
+}
+</div></code></pre>
+<p>输出:</p>
+<pre><code class="language-java"><div>name=<span class="hljs-string">'null'</span>, age=<span class="hljs-number">0</span>, salary=<span class="hljs-number">0.0</span>
+</div></code></pre>
+<p><img src="file:///g:\学习笔记\Content\images\images12.png" alt="这里写图片描述"></p>
+<p><img src="file:///g:\学习笔记\Content\images\lambda12.png" alt="这里写图片描述"></p>
+<p>再看构造器一个参数的:</p>
+<pre><code class="language-java"><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test6</span><span class="hljs-params">()</span></span>{
+    Function&lt;String,Employee&gt;fun = Employee::<span class="hljs-keyword">new</span>;
+    System.out.println(fun.apply(<span class="hljs-string">"zx"</span>));
+}
+</div></code></pre>
+<p>输出：</p>
+<pre><code class="language-java"><div>name=<span class="hljs-string">'zx'</span>, age=<span class="hljs-number">0</span>, salary=<span class="hljs-number">0.0</span>
+</div></code></pre>
+<p><img src="file:///g:\学习笔记\Content\images\lambda13.png" alt="这里写图片描述"></p>
+<p><img src="file:///g:\学习笔记\Content\images\lambda14.png" alt="这里写图片描述"></p>
+<p>如果想要匹配多个的，(两个的可以使用<code>BiFunction</code>)，下面看一个三个的:
+例如想匹配这个:</p>
+<pre><code class="language-java"><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ComplexApple</span> </span>{
+
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> weight;
+    <span class="hljs-keyword">private</span> String color;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ComplexApple</span><span class="hljs-params">()</span> </span>{
+    }
+
+    <span class="hljs-comment">//匹配这个构造方法</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ComplexApple</span><span class="hljs-params">(String name, <span class="hljs-keyword">int</span> weight, String color)</span> </span>{
+        <span class="hljs-keyword">this</span>.name = name;
+        <span class="hljs-keyword">this</span>.weight = weight;
+        <span class="hljs-keyword">this</span>.color = color;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getName</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> name;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setName</span><span class="hljs-params">(String name)</span> </span>{
+        <span class="hljs-keyword">this</span>.name = name;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getWeight</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> weight;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setWeight</span><span class="hljs-params">(<span class="hljs-keyword">int</span> weight)</span> </span>{
+        <span class="hljs-keyword">this</span>.weight = weight;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getColor</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> color;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setColor</span><span class="hljs-params">(String color)</span> </span>{
+        <span class="hljs-keyword">this</span>.color = color;
+    }
+}
+
+</div></code></pre>
+<p>自己建一个接口:</p>
+<pre><code class="language-java"><div><span class="hljs-meta">@FunctionalInterface</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">ThreeFunction</span>&lt;<span class="hljs-title">A</span>,<span class="hljs-title">B</span>,<span class="hljs-title">C</span>,<span class="hljs-title">R</span>&gt; </span>{
+    <span class="hljs-function">R <span class="hljs-title">apply</span><span class="hljs-params">(A a,B b,C c)</span></span>;
+}
+
+</div></code></pre>
+<p>测试:</p>
+<pre><code class="language-java"><div>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+
+        ThreeFunction&lt;String,Integer,String,ComplexApple&gt; tf = ComplexApple::<span class="hljs-keyword">new</span>;
+
+        ComplexApple apple = tf.apply(<span class="hljs-string">"蓝色"</span>, <span class="hljs-number">12</span>, <span class="hljs-string">"好苹果"</span>);
+        
+    }
+}
+
+</div></code></pre>
+
+    </body>
+    </html>
